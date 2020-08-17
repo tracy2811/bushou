@@ -74,7 +74,7 @@ const scrape = async () => {
           .find('tbody > tr:not(.vsHide) > td > a > img')
           .each(async (_, v) => {
             const src = $(v).attr('src');
-            const name = decodeURIComponent(src.split('/').pop());
+            const name = src.split('/').pop();
             const url = `https:${src}`;
             glyphOrigin.push(name);
             saveImage(url, name);
@@ -87,7 +87,7 @@ const scrape = async () => {
         const orderURL = cheerio
           .load(res[1].data)('img[src$="-order.gif"]')
           .attr('src');
-        const order = decodeURIComponent(orderURL.split('/').pop());
+        const order = orderURL.split('/').pop();
         saveImage(orderURL, order);
         r.order = order;
         r.glyphOrigin = glyphOrigin;
@@ -101,14 +101,39 @@ const scrape = async () => {
   }
 };
 
-scrape().then((r) =>
-  fs.writeFile('radicals.json', JSON.stringify(r), (err) => {
+const generateImageIndex = (radicals) => {
+  let text = 'const img = {';
+  radicals.forEach((r) => {
+    const name = encodeURIComponent(r.radical[0]);
+    text += `'${name}': {order: require('./${r.order}'), glyphOrigin: [`;
+    r.glyphOrigin.forEach((o) => {
+      text += `require('./${o}'),`;
+    });
+    text += ']},';
+  });
+
+  text += '}; export default img;';
+
+  fs.writeFile('./img/index.js', text, (err) => {
     if (err) {
       console.error(err);
     } else {
-      console.log('Scraped! Check radicals.json for more information!');
+      console.log('Generate img/index.js');
     }
-  }),
-);
+  });
+};
 
-export default scrape;
+const generateJSON = (radicals) => {
+  fs.writeFile('radicals.json', JSON.stringify(radicals), (err) => {
+    if (err) {
+      console.error(err);
+    } else {
+      console.log('Generate radicals.json');
+    }
+  });
+};
+
+scrape().then((r) => {
+  generateImageIndex(r);
+  generateJSON(r);
+});

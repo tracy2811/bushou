@@ -8,7 +8,7 @@ import {
   SectionList,
   BackHandler,
 } from 'react-native';
-import img from '../img-encode/';
+import img from '../img/';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 const RadicalBasic = ({radical}) => {
@@ -62,7 +62,10 @@ const RadicalBasic = ({radical}) => {
             }>
             {radical.note}
           </Text>
-          <Image style={styles.img} source={img[encodeURI(radical.radical[0])].order} />
+          <Image
+            style={styles.img}
+            source={img[encodeURI(radical.radical[0])].order}
+          />
         </>
       )}
     </TouchableOpacity>
@@ -150,7 +153,9 @@ const RadicalsList = ({radicals, setHome, setLearning, learnAvailable}) => {
         />
       </View>
       <TouchableOpacity style={styles.footer} onPress={onPressLearn}>
-        <Text style={styles.learnText}>{learnAvailable ? 'Start' : "You've learnt them all!"}</Text>
+        <Text style={styles.learnText}>
+          {learnAvailable ? 'Start' : "You've learnt them all!"}
+        </Text>
       </TouchableOpacity>
     </View>
   );

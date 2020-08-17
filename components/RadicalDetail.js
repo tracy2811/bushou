@@ -8,7 +8,7 @@ import {
   ScrollView,
   BackHandler,
 } from 'react-native';
-import img from '../img-encode/';
+import img from '../img/';
 
 const RadicalDetail = ({queue, setQueue, setHome, setLearning}) => {
   const [orderShown, setOrderShown] = useState(true);
